@@ -104,6 +104,7 @@ class NewsTest(TestCase):
         })
         self.assertTrue(valid_form.is_valid())
         self.assertFalse(invalid_form_no_body.is_valid())
+
 def create_image(filename, size=(100,100), image_mode='RGB', image_format='PNG'):
     data = BytesIO()
     Image.new(image_mode, size).save(data, image_format)
@@ -122,7 +123,7 @@ class MySeleniumTests(StaticLiveServerTestCase):
         admin_user.is_superuser = True
         admin_user.set_password('admin')
         admin_user.save()
-        binary = FirefoxBinary(r'C:\Program Files\Mozilla Firefox\firefox.exe')
+        binary = FirefoxBinary(r'C:\Users\kidkod-1\AppData\Local\Mozilla Firefox\firefox.exe')
         cls.selenium = webdriver.Firefox(firefox_binary=binary)
         cls.selenium.implicitly_wait(10)
     @classmethod
@@ -133,3 +134,16 @@ class MySeleniumTests(StaticLiveServerTestCase):
     def test_login(self):
         import time
         self.selenium.get(f'{self.live_server_url}/login/')
+        username_input = self.selenium.find_element_by_name('username')
+        username_input.send_keys('admin')
+        time.sleep(1)
+        password_input = self.selenium.find_element_by_name('password')
+        password_input.send_keys('admin')
+        time.sleep(1)
+        self.selenium.find_element_by_xpath('//input[@value="Войти"]').click()
+        time.sleep(1)
+        nav = self.selenium.find_element_by_class_name('nav-menu')
+        nav.screenshot('nav_test_screenshot.png')
+        self.assertTrue('admin' in nav.text)
+        self.selenium.find_element_by_link_text('Выйти').click()
+        time.sleep(1)

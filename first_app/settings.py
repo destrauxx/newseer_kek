@@ -79,6 +79,17 @@ DATABASES = {
     }
 }
 
+DEVELOPMENT = False
+
+if not DEVELOPMENT:
+    from .prod import DEBUG, ALLOWED_HOSTS, MIDDLEWARE
+    import dj_database_url
+    db_from_env = dj_database_url.config(conn_max_age=500)
+    DATABASES['default'].update(db_from_env)
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+    from .dev import DEBUG, ALLOWED_HOSTS, MIDDLEWARE
+    
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -120,7 +131,8 @@ LOGIN_REDIRECT_URL = '/'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/staticbase/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'static'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'staticbase',
@@ -128,3 +140,4 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'staticbase' / 'media'
+
